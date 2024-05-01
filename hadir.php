@@ -61,7 +61,7 @@ if (mysqli_num_rows($query) > 0) {
     # Display activity notice
     echo strtoupper(
         "<u>NOTIS PERINGATAN</u><br>" .
-        $senarai['namaAktiviti'] .
+        $senarai['keteranganAktiviti'] .
         "<br>TARIKH: " . $senarai['tarikhAktiviti']
     );
     echo "<hr>";
