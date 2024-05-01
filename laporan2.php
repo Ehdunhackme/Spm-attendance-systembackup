@@ -72,9 +72,9 @@ $jumpa = 0;
             <?php
             $senaraiAktiviti = mysqli_query($con, "SELECT * FROM aktiviti ORDER BY tarikhAktiviti DESC");
             echo "<option>--PILIH--</option>";
-            while ($namaAktiviti = mysqli_fetch_array($senaraiAktiviti)) {
-                echo "<option value='{$namaAktiviti['kodAktiviti']}'>
-                    {$namaAktiviti['namaAktiviti']}</option>";
+            while ($keteranganAktiviti = mysqli_fetch_array($senaraiAktiviti)) {
+                echo "<option value='{$keteranganAktiviti['kodAktiviti']}'>
+                    {$keteranganAktiviti['keteranganAktiviti']}</option>";
             }
             ?>
         </select>
@@ -90,7 +90,7 @@ $jumpa = 0;
         $detail = mysqli_fetch_array($keterangan);
         ?>
         <div id='printarea'>
-            <h2>SENARAI AHLI TIDAK HADIR AKTIVITI <?php echo $detail['namaAktiviti']; ?><br>
+            <h2>SENARAI AHLI TIDAK HADIR AKTIVITI <?php echo $detail['keteranganAktiviti']; ?><br>
             PADA <?php echo $detail['tarikhAktiviti']; ?></h2>
 
             <!-- Non-attendees Table -->

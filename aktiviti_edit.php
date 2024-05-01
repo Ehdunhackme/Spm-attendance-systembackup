@@ -18,7 +18,7 @@ if (isset($_POST['submit'])) {
 
     #PROSES KEMASKINI
     $result2 = mysqli_query($con, "UPDATE aktiviti 
-    SET namaAktiviti='$data1',tarikhAktiviti='$data2',masaAktiviti='$data3'
+    SET keteranganAktiviti='$data1',tarikhAktiviti='$data2',masaAktiviti='$data3'
     WHERE kodAktiviti='$id'");
     echo "<script>alert('Aktiviti telah dikemaskini');
     window.location='aktiviti.php'</script>";
@@ -38,7 +38,7 @@ if (isset($_POST['submit'])) {
 <form method="POST">
 <p>KETERANGAN:<br>
 <input type="text" name="aktiviti" 
-value="<?php echo $EditAktiviti['namaAktiviti']; ?>" 
+value="<?php echo $EditAktiviti['keteranganAktiviti']; ?>" 
 size="70%" required autofocus></p>
 <p>MASA:<br>
 <input type="time" name="masaAktiviti"

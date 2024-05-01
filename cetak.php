@@ -18,7 +18,7 @@ if (isset($_POST['carian'])) {
         <h2><u>LAPORAN KEHADIRAN</u></h2>
         <?php
         $papar = mysqli_fetch_array($query_hadir);
-        echo "AKTIVITI : " . $papar['namaAktiviti'];
+        echo "AKTIVITI : " . $papar['keteranganAktiviti'];
         echo "<br>NAMA : " . $papar['namaMurid'];
         echo "<br>JANTINA : " . $papar['jantina'];
         echo "<br>ID MURID : " . $papar['idMurid'];

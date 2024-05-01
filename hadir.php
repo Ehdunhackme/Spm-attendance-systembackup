@@ -117,7 +117,7 @@ if (mysqli_num_rows($query) > 0) {
             ?>
             <tr>
                 <td><?php echo $no; ?></td>
-                <td><?php echo $info1['namaAktiviti']; ?></td>
+                <td><?php echo $info1['keteranganAktiviti']; ?></td>
                 <td><?php echo $info1['tarikh']; ?></td>
                 <td><?php echo $info1['masa']; ?></td>
             </tr>
