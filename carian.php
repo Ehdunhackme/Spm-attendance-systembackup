@@ -1,24 +1,24 @@
 <?php
-include_once 'header.php'; // Include your header file
-
-// Ensure database connection is established
+// Include header and ensure the database connection is established
+include 'header.php';
 if (!$con) {
     die("Database connection failed: " . mysqli_connect_error());
 }
-
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Page Title</title>
+    <title>Laporan Kehadiran</title>
+    
+    <!-- Styling for buttons, table, and print rules -->
     <style>
     .styled-button {
         background-color: #3498db; /* Blue background */
         border: none; /* No border */
         color: white; /* White text */
-        padding: 10px 20px; /* Padding for better button size */
-        text-align: center; /* Center text */
+        padding: 10px 20px; /* Padding for larger button size */
+        text-align: center; /* Center the text */
         text-decoration: none; /* No underlines */
         display: inline-block; /* Display inline-block */
         font-size: 16px; /* Font size */
@@ -32,58 +32,93 @@ if (!$con) {
         transform: scale(1.1); /* Slight scaling effect on hover */
         color: #e6f1ff; /* Lighter text color on hover */
     }
+
+    /* Table styling */
+    .styled-table {
+        width: 100%; /* Full width */
+        border-collapse: collapse; /* No double borders */
+        font-size: 16px; /* Readable font size */
+        text-align: left; /* Left-align text */
+    }
+
+    .styled-table th {
+        background-color: #3498db; /* Blue background for headers */
+        color: white; /* White text for headers */
+        padding: 12px; /* Padding for headers */
+    }
+
+    .styled-table td {
+        padding: 10px; /* Padding for table cells */
+        border-bottom: 1px solid #ddd; /* Border at the bottom */
+    }
+
+    .styled-table tr:nth-child(even) {
+        background-color: #f2f2f2; /* Alternate row background */
+    }
+
+    .styled-table tr:hover {
+        background-color: #f5f5f5; /* Hover effect */
+    }
+
+    /* Hide elements during printing */
+    @media print {
+        .no-print {
+            display: none; /* Hide these elements during printing */
+        }
+
+        .styled-table, .styled-table th, .styled-table td {
+            border: 1px solid black; /* Ensure consistent table borders during printing */
+        }
+    }
     </style>
+
+    <script>
+    function printContent() {
+        window.print(); /* Triggers the print dialog */
+    }
+    </script>
 </head>
+
 <body>
-<div id="menu">
-    <?php include_once 'menuAdmin.php'; ?>
+
+<!-- Hide menu during printing -->
+<div id="menu" class="no-print"> 
+    <?php include 'menuAdmin.php'; ?>
 </div>
+
 <br>
+
+<!-- Main content area -->
 <div id="isi">
 
-<!-- Search Form with Fixed 5-Character Length -->
-<form method="post">
+<!-- Search Form with hidden elements during printing -->
+<form method="post" class="no-print"> <!-- No-print to hide during printing -->
     <label for="carian">Carian idMurid:</label>
-    <input type="text" name="carian" id="carian" pattern="\w{5}" title="ID must be 5 characters long" required>
-    <button class="styled-button" type="submit" name="cari">CARI</button>
+    <input type="text" name="carian" pattern="\w{5}" required>
+    <button class="styled-button" type="submit" name="cari">CARI</button> <!-- Hidden during printing -->
 </form>
 
 <?php
-# Check if a search term has been submitted
 if (isset($_POST['carian'])) {
     $jumpa = $_POST['carian']; # ID to search for
     
-    # Ensure the ID is exactly 5 characters
     if (strlen($jumpa) !== 5) {
         echo "Error: idMurid must be exactly 5 characters long.";
         return;
     }
     
-    # Display a test query to ensure data is available
-    $test_query = mysqli_query($con, "SELECT * FROM peserta WHERE idMurid = '$jumpa'");
-    if (!$test_query) {
-        die("Test query failed: " . mysqli_error($con));
-    }
-    
-    if (mysqli_num_rows($test_query) == 0) {
-        echo "No record found for idMurid: " . $jumpa;
-        return;
-    }
-
-    # Original query with error handling
     $query_hadir = mysqli_query($con, "SELECT * FROM kehadiran AS t1
         INNER JOIN peserta AS t2 ON t1.idMurid = t2.idMurid
         INNER JOIN hp AS t3 ON t2.nomHP = t3.nomHP
         INNER JOIN aktiviti AS t4 ON t1.kodAktiviti = t4.kodAktiviti
         WHERE t1.idMurid = '$jumpa'
         ORDER BY t3.namaMurid ASC");
-    
+
     if (!$query_hadir) {
         die("Query failed: " . mysqli_error($con));
     }
     
     if (mysqli_num_rows($query_hadir) > 0) {
-        # If records are found, display the report
         ?>
         <h2><u>LAPORAN KEHADIRAN</u></h2>
         <?php
@@ -95,9 +130,9 @@ if (isset($_POST['carian'])) {
         
         $no = 1;
         ?>
-        <!-- Display table -->
+        <!-- Display the table -->
         <hr>
-        <table border="1">
+        <table class="styled-table"> <!-- Apply styled-table class -->
             <tr>
                 <th>BIL</th>
                 <th>TARIKH</th>
@@ -114,23 +149,22 @@ if (isset($_POST['carian'])) {
                 <?php $no++;
             }
             ?>
-            <tr>
+            <tr class="no-print"> <!-- Hide during printing -->
                 <td colspan="3" align="center">
-                    <font style="font-size: 10px">
-                        * End of List *<br>
-                        Number of Attendances: <?php echo $no - 1; ?>
-                    </font> <br>
-                    <button class="styled-button" onclick="window.print()">CETAK</button>
+                    <font style="font-size: 10px">* End of List *<br>
+                    Number of Attendances: <?php echo $no - 1; ?></font> <br>
+                    <button class="styled-button" onclick="printContent()">CETAK</button> <!-- Hide during printing -->
                 </td>
             </tr>
         </table>
         <?php
     } else {
-        # If no records are found
-        echo "Tiada rekod kehadiran"; # "No attendance record"
+        echo "Tiada rekod kehadiran"; # If no attendance record found
     }
 }
 ?>
 </div> <!-- END #isi -->
+</div> <!-- END #printarea -->
+
 </body>
 </html>
