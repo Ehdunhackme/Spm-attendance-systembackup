@@ -7,7 +7,9 @@ $jumpa = 0;
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Button Styles -->
+    <title>Laporan Tidak Hadir Aktiviti</title>
+
+    <!-- Button and Table Styles -->
     <style>
     .styled-button {
         background-color: #3498db; /* Blue background */
@@ -55,19 +57,38 @@ $jumpa = 0;
     .styled-table tr:hover {
         background-color: #f5f5f5; /* Background color on hover */
     }
+
+    /* Hide elements during printing */
+    @media print {
+        .no-print {
+            display: none; /* Hide all elements with this class during printing */
+        }
+
+        .styled-table, .styled-table th, .styled-table td {
+            border: 1px solid black; /* Ensure table borders are visible during printing */
+        }
+    }
     </style>
+
+    <script>
+    function printTable() {
+        window.print(); /* Print the current window */
+    }
+    </script>
 </head>
+
 <body>
+
 <!-- Call Menu -->
-<div id="menu">
+<div id="menu" class="no-print"> <!-- Apply no-print class -->
     <?php include 'menuadmin.php'; ?>
 </div>
 
 <!-- Call Content -->
 <div id="isi">
-    <label id="sembunyi">SENARAI AKTIVITI:</label>
+
     <!-- Search Form -->
-    <form method="POST" name="search" id="sembunyi">
+    <form method="POST" name="search" class="no-print"> <!-- Apply no-print class -->
         <select name="aktiviti">
             <?php
             $senaraiAktiviti = mysqli_query($con, "SELECT * FROM aktiviti ORDER BY tarikhAktiviti DESC");
@@ -78,7 +99,7 @@ $jumpa = 0;
             }
             ?>
         </select>
-        <button class="styled-button" type="submit" name="cari">PILIH</button> <!-- Apply styled-button class -->
+        <button class="styled-button no-print" type="submit" name="cari">PILIH</button> <!-- Apply no-print class -->
     </form>
 
     <?php
@@ -86,55 +107,51 @@ $jumpa = 0;
         $jumpa = $_POST['aktiviti'];
 
         # Display Activity Details
-        $keterangan = mysqli_query($con, "SELECT * FROM aktiviti WHERE kodAktiviti='$jumpa'");
+        $keterangan = mysqli_query($con, "SELECT * FROM aktiviti WHERE kodAktiviti = '$jumpa'");
         $detail = mysqli_fetch_array($keterangan);
-        ?>
-        <div id='printarea'>
-            <h2>SENARAI AHLI TIDAK HADIR AKTIVITI <?php echo $detail['keteranganAktiviti']; ?><br>
-            PADA <?php echo $detail['tarikhAktiviti']; ?></h2>
 
-            <!-- Non-attendees Table -->
-            <table class="styled-table"> <!-- Apply styled-table -->
-                <tr>
-                    <th>BIL</th>
-                    <th>NAMA</th>
-                    <th>JANTINA</th>
-                    <th>ID MURID</th>
-                    <th>nomHP</th>
-                </tr>
-                <?php
-                $no = 1;
-                $data1 = mysqli_query($con, "SELECT * FROM peserta AS t1 INNER JOIN hp AS t3 ON t1.nomHP = t3.nomHP WHERE t1.idMurid NOT IN (SELECT t2.idMurid FROM kehadiran AS t2 WHERE t2.kodAktiviti = '$jumpa') ORDER BY t1.idMurid ASC");
-                while ($info = mysqli_fetch_array($data1)) {
-                    ?>
-                    <tr>
-                        <td><?php echo $no; ?></td>
-                        <td><?php echo $info['namaMurid']; ?></td>
-                        <td><?php echo $info['jantina']; ?></td>
-                        <td><?php echo $info['idMurid']; ?></td>
-                        <td><?php echo $info['nomHP']; ?></td>
-                    </tr>
-                    <?php $no++; } ?>
-                <tr>
-                    <td colspan="6" align="center">
-                        <font style='font-size: 15px'>
-                        * Jumlah Tidak Hadir: <?php echo $no - 1; ?> /
-                        <?php
-                        $kira = mysqli_query($con, "SELECT COUNT(*) FROM peserta");
-                        $detail1 = mysqli_fetch_array($kira);
-                        echo "/" . $detail1['COUNT(*)'];
-                        ?>
-                        </font><br>
-                        <button class="styled-button" onclick='javascript:window.print()'>CETAK</button> <!-- Apply styled-button -->
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <?php
+        # Printable area for the report
+        echo "<div id='printarea'>";
+        echo "<h2>SENARAI AHLI TIDAK HADIR AKTIVITI " . $detail['keteranganAktiviti'] . "<br>";
+        echo "PADA " . $detail['tarikhAktiviti'] . "</h2>";
+
+        # Non-attendees table
+        echo "<table class='styled-table'>"; 
+        echo "<tr><th>BIL</th><th>NAMA</th><th>JANTINA</th><th>ID MURID</th><th>nomHP</th></tr>";
+
+        $no = 1;
+        $data1 = mysqli_query($con, "SELECT * FROM peserta AS t1 INNER JOIN hp AS t3 ON t1.nomHP = t3.nomHP WHERE t1.idMurid NOT IN (SELECT t2.idMurid FROM kehadiran AS t2 WHERE t2.kodAktiviti = '$jumpa') ORDER BY t1.idMurid ASC");
+
+        while ($info = mysqli_fetch_array($data1)) {
+            echo "<tr>";
+            echo "<td>" . $no . "</td>";
+            echo "<td>" . $info['namaMurid'] . "</td>";
+            echo "<td>" . $info['jantina'] . "</td>";
+            echo "<td>" . $info['idMurid'] . "</td>";
+            echo "<td>" . $info['nomHP'] . "</td>";
+            echo "</tr>";
+            $no++;
+        }
+
+        echo "</table>";
+
+        # Total count and print button (to be hidden during printing)
+        echo "<font style='font-size: 15px'>* Jumlah Tidak Hadir: " . ($no - 1) . " / ";
+
+        $kira = mysqli_query($con, "SELECT COUNT(*) FROM peserta");
+        $detail1 = mysqli_fetch_array($kira);
+        echo "/" . $detail1['COUNT(*)'];
+
+        echo "</font><br>";
+
+        echo "<button class='styled-button no-print' onclick='printTable()'>CETAK</button>"; # Hidden during printing
+        echo "</div>"; # End of printable area
+
     } else {
-        echo "(N/A) Tiada Rekod";
+        echo "(N/A) Tiada Rekod"; # If no record is found
     }
     ?>
-</div>
+</div> <!-- End of #isi -->
+
 </body>
 </html>

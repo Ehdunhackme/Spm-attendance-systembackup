@@ -53,11 +53,29 @@ $jumpa = 0;
     tr:hover {
         background-color: #f5f5f5; /* Darker background on hover */
     }
+
+    /* Styles for printing */
+    @media print {
+        .no-print {
+            display: none; /* Hide all elements with the no-print class */
+        }
+
+        /* Ensure proper table borders during printing */
+        table, th, td {
+            border: 1px solid black;
+        }
+    }
     </style>
+
+    <script>
+    function printTable() {
+        window.print();
+    }
+    </script>
 </head>
 <body>
-<!-- Call Menu -->
-<div id="menu">
+
+<div id="menu" class="no-print"> <!-- Apply no-print class to hide during printing -->
     <?php include 'menuadmin.php'; ?>
 </div>
 
@@ -65,7 +83,7 @@ $jumpa = 0;
 <div id="isi">
     <label id="sembunyi">SENARAI AKTIVITI:</label>
     <!-- Search Form -->
-    <form method="POST" name="search" id="sembunyi">
+    <form method="POST" name="search" id="sembunyi" class="no-print"> <!-- Apply no-print class -->
         <select name="aktiviti">
             <?php
             $senaraiAktiviti = mysqli_query($con, "SELECT * FROM aktiviti ORDER BY tarikhAktiviti DESC");
@@ -76,7 +94,7 @@ $jumpa = 0;
             }
             ?>
         </select>
-        <button class="styled-button" type="submit" name="cari">PILIH</button> <!-- Apply styled-button class -->
+        <button class="styled-button no-print" type="submit" name="cari">PILIH</button> <!-- Apply no-print class -->
     </form>
 
     <?php
@@ -84,52 +102,47 @@ $jumpa = 0;
         $jumpa = $_POST['aktiviti'];
 
         # Display Activity Details
-        $keterangan = mysqli_query($con, "SELECT * FROM aktiviti WHERE kodAktiviti='$jumpa'");
+        $keterangan = mysqli_query($con, "SELECT * FROM aktiviti WHERE kodAktiviti = '$jumpa'");
         $detail = mysqli_fetch_array($keterangan);
-        ?>
-        <div id='printarea'>
-            <h2>LAPORAN KEHADIRAN AKTIVITI <?php echo $detail['keteranganAktiviti']; ?><br>
-            PADA <?php echo $detail['tarikhAktiviti']; ?></h2>
 
-            <!-- Display Attendance Table -->
-            <table>
-                <tr>
-                    <th>BIL</th>
-                    <th>NAMA</th>
-                    <th>JANTINA</th>
-                    <th>ID MURID</th>
-                    <th>TARIKH</th>
-                    <th>MASA</th>
-                </tr>
-                <?php
-                $no = 1;
-                $data1 = mysqli_query($con, "SELECT * FROM kehadiran AS t1 INNER JOIN peserta AS t2 ON t1.idMurid = t2.idMurid INNER JOIN hp AS t3 ON t2.nomHP = t3.nomHP WHERE t1.kodAktiviti = '$jumpa' ORDER BY t1.tarikh ASC");
-                while ($info = mysqli_fetch_array($data1)) {
-                    ?>
-                    <tr>
-                        <td><?php echo $no; ?></td>
-                        <td><?php echo $info['namaMurid']; ?></td>
-                        <td><?php echo $info['jantina']; ?></td>
-                        <td><?php echo $info['idMurid']; ?></td>
-                        <td><?php echo $info['tarikh']; ?></td>
-                        <td><?php echo $info['masa']; ?></td>
-                    </tr>
-                    <?php $no++; } ?>
-                </table>
+        # Printable area
+        echo "<div id='printarea'>";
+        echo "<h2>LAPORAN KEHADIRAN AKTIVITI " . $detail['keteranganAktiviti'] . "<br>PADA " . $detail['tarikhAktiviti'] . "</h2>";
 
-                <font style='font-size: 15px'>
-                    * Jumlah Hadir: <?php echo $no - 1; ?> /
-                    <?php
-                    $kira = mysqli_query($con, "SELECT COUNT(*) FROM peserta");
-                    $detail1 = mysqli_fetch_array($kira);
-                    echo $detail1['COUNT(*)'];
-                    ?>
-                </font><br>
-                <button class="styled-button" onclick='javascript:window.print()'>CETAK</button> <!-- Apply styled-button -->
-            </div>
-        <?php
+        # Display the attendance table
+        echo "<table>";
+        echo "<tr><th>BIL</th><th>NAMA</th><th>JANTINA</th><th>ID MURID</th><th>TARIKH</th><th>MASA</th></tr>";
+
+        $no = 1;
+        $data1 = mysqli_query($con, "SELECT * FROM kehadiran AS t1 INNER JOIN peserta AS t2 ON t1.idMurid = t2.idMurid INNER JOIN hp AS t3 ON t2.nomHP = t3.nomHP WHERE t1.kodAktiviti = '$jumpa' ORDER BY t1.tarikh ASC");
+
+        while ($info = mysqli_fetch_array($data1)) {
+            echo "<tr>";
+            echo "<td>" . $no . "</td>";
+            echo "<td>" . $info['namaMurid'] . "</td>";
+            echo "<td>" . $info['jantina'] . "</td>";
+            echo "<td>" . $info['idMurid'] . "</td>";
+            echo "<td>" . $info['tarikh'] . "</td>";
+            echo "<td>" . $info['masa'] . "</td>";
+            echo "</tr>";
+            $no++;
+        }
+
+        echo "</table>";
+
+        # Display total attendance count and print button (hidden when printing)
+        echo "<font style='font-size: 15px'>* Jumlah Hadir: " . ($no - 1) . " / ";
+
+        $kira = mysqli_query($con, "SELECT COUNT(*) FROM peserta");
+        $detail1 = mysqli_fetch_array($kira);
+        echo $detail1['COUNT(*)'];
+
+        echo "</font><br>";
+
+        echo "<button class='styled-button no-print' onclick='printTable()'>CETAK</button>"; # Button hidden during printing
+        echo "</div>";
     } else {
-        echo "(N/A) Tiada Rekod";   
+        echo "(N/A) Tiada Rekod"; # If no record is found
     }
     ?>
 </div>
