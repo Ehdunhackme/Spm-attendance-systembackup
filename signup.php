@@ -52,7 +52,6 @@
     <input type="password" name="kataLaluan" placeholder="********" size="30" minlength="6" maxlength="6" required></p>
     <div>
     <button class="styled-button" name="hantar" type="submit">DAFTAR</button> <!-- Apply styled-button class -->
-    <button class="styled-button" type="reset">HAPUS</button> <!-- Apply styled-button class -->
     </div>
 </form>
 </div>

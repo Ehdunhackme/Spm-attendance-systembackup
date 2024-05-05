@@ -26,7 +26,7 @@ if (isset($_POST['idAdmin'])) {
         $_SESSION['level'] = $row['level']; // Store admin level in session
 
         // Display success message and redirect to dashboard
-        echo "<script>alert('Berjaya berdaftar!'); 
+        echo "<script>alert('Berjaya Log Masuk Akaun Admin!'); 
         window.location='dashboardAdmin.php'</script>";
     }
 }

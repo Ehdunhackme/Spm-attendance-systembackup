@@ -30,6 +30,6 @@ if (isset($_POST['idMurid'])) {
         $_SESSION['level'] = $row['aras'];
 
         # Show success pop-up and redirect to dashboard
-        echo "<script>alert('Berdaftar berjaya!'); window.location='dashboard.php';</script>";
+        echo "<script>alert('Log Masuk Akaun Murid Berjaya!'); window.location='dashboard.php';</script>";
     }
 }
