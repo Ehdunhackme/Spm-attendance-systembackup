@@ -21,14 +21,14 @@ if (isset($_POST["import"])) {
             mysqli_query($con, "INSERT INTO peserta
             values 
             ('".$idMurid."','".$JANTINA."','".$HP."','".$PW."')");
-            echo "<script>alert('Import CSV Berjaya');
+            echo "<script>alert('Mengimport Maklumat Murid Berjaya!');
             window.location = 'senarai_ahli.php'</script>";
         }
         fclose($file);
     }else{
 
 
-        echo "<script>alert('pindah naik data CSV gagal');
+        echo "<script>alert('Mengimport Maklumat Murid Gagal');
         window.location = 'import_ahli.php'</script>";
 
     }

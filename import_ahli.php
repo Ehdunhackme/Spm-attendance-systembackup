@@ -45,11 +45,6 @@ include 'header.php';
         <input type="file" name="file" accept=".csv"><br>
         <button class="styled-button" type="submit" name="import">UPLOAD</button> <!-- Apply styled-button -->
     </form>
-
-    <u>CONTOH: </u><br><br>
-    AFEEF, L, D5236, 0199287674, afeer1<br>
-    AINAA, P, D5237, 0199262683, ainna2<br>
-    <p>*Cipta fail dalam notepad++ dan SAVE AS senarai.csv*</p>
 </div>
 </body>
 </html>
