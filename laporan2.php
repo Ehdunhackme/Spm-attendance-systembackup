@@ -86,6 +86,7 @@ $jumpa = 0;
 
 <!-- Call Content -->
 <div id="isi">
+<label id="sembunyi">SENARAI AKTIVITI:</label>
 
     <!-- Search Form -->
     <form method="POST" name="search" class="no-print"> <!-- Apply no-print class -->
