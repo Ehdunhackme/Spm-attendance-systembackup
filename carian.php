@@ -69,6 +69,10 @@ if (!$con) {
         .styled-table, .styled-table th, .styled-table td {
             border: 1px solid black; /* Ensure consistent table borders during printing */
         }
+
+        .print-button {
+            display: none; /* Hide CETAK button during printing */
+        }
     }
     </style>
 
@@ -107,64 +111,39 @@ if (isset($_POST['carian'])) {
         return;
     }
     
-    $query_hadir = mysqli_query($con, "SELECT * FROM kehadiran AS t1
-        INNER JOIN peserta AS t2 ON t1.idMurid = t2.idMurid
-        INNER JOIN hp AS t3 ON t2.nomHP = t3.nomHP
-        INNER JOIN aktiviti AS t4 ON t1.kodAktiviti = t4.kodAktiviti
-        WHERE t1.idMurid = '$jumpa'
-        ORDER BY t3.namaMurid ASC");
+    $query_peserta = mysqli_query($con, "SELECT * FROM peserta WHERE idMurid = '$jumpa'");
 
-    if (!$query_hadir) {
+    if (!$query_peserta) {
         die("Query failed: " . mysqli_error($con));
     }
-    
-    if (mysqli_num_rows($query_hadir) > 0) {
+
+    if (mysqli_num_rows($query_peserta) > 0) {
+        $papar = mysqli_fetch_array($query_peserta);
         ?>
-        <h2><u>LAPORAN KEHADIRAN</u></h2>
-        <?php
-        $papar = mysqli_fetch_array($query_hadir);
-        echo "AKTIVITI: " . $papar['keteranganAktiviti'] . "<br>";
-        echo "NAMA: " . $papar['namaMurid'] . "<br>";
-        echo "JANTINA: " . $papar['jantina'] . "<br>";
-        echo "ID MURID: " . $papar['idMurid'] . "<br>";
-        
-        $no = 1;
-        ?>
-        <!-- Display the table -->
-        <hr>
-        <table class="styled-table"> <!-- Apply styled-table class -->
+        <h2><u>MAKLUMAT PESERTA</u></h2>
+        <table class="styled-table">
             <tr>
-                <th>BIL</th>
-                <th>TARIKH</th>
-                <th>MASA</th>
+                <th>ID MURID</th>
+                <th>JANTINA</th>
+                <th>NOMBOR HP</th>
+                <th>KATA LALUAN</th>
             </tr>
-            <?php
-            foreach ($query_hadir as $hadir) {
-                ?>
-                <tr>
-                    <td><?php echo $no; ?></td>
-                    <td><?php echo $hadir['tarikh']; ?></td>
-                    <td><?php echo $hadir['masa']; ?></td>
-                </tr>
-                <?php $no++;
-            }
-            ?>
-            <tr class="no-print"> <!-- Hide during printing -->
-                <td colspan="3" align="center">
-                    <font style="font-size: 10px">* End of List *<br>
-                    Number of Attendances: <?php echo $no - 1; ?></font> <br>
-                    <button class="styled-button" onclick="printContent()">CETAK</button> <!-- Hide during printing -->
-                </td>
+            <tr>
+                <td><?php echo $papar['idMurid']; ?></td>
+                <td><?php echo $papar['jantina']; ?></td>
+                <td><?php echo $papar['nomHP']; ?></td>
+                <td><?php echo $papar['kataLaluan']; ?></td>
             </tr>
         </table>
+        <br>
+        <button class="styled-button print-button" onclick="printContent()">CETAK</button> <!-- Allow printing -->
         <?php
     } else {
-        echo "Tiada rekod kehadiran"; # If no attendance record found
+        echo "Tiada rekod peserta dengan idMurid tersebut.";
     }
 }
 ?>
 </div> <!-- END #isi -->
-</div> <!-- END #printarea -->
 
 </body>
 </html>
