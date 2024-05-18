@@ -44,7 +44,7 @@
     <ul>
         <li><a href="aktiviti.php">SENARAI AKTIVITI</a></li>
         <li><a href="senarai_ahli.php">SENARAI MURID</a></li>
-        <li><a href="carian.php">CARIAN KEHADIRAN MURID</a></li>
+        <li><a href="carian.php">CARIAN MAKLUMAT MURID</a></li>
         <li><a href="laporan1.php">LAPORAN KEHADIRAN MURID</a></li>
         <li><a href="laporan2.php">LAPORAN TIDAK HADIR MURID</a></li>
         <li><a href="logout.php">LOG KELUAR</a></li>
