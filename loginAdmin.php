@@ -1,4 +1,4 @@
-<?php
+Z<?php
 session_start(); // Start the session
 
 require 'database.php'; // Include database connection

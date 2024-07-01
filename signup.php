@@ -24,19 +24,51 @@
         transform: scale(1.1); /* Slight scaling effect on hover */
         color: #e6f1ff; /* Lighter text color on hover */
     }
+    
+    .error-message {
+        font-size: 10px; 
+        color: red;
+        margin-top: 5px;
+    }
     </style>
+
+    <!-- Adding JavaScript for form validation -->
+    <script>
+    function validateID() {
+        var idMurid = document.forms["registrationForm"]["idMurid"].value;
+        var idMuridError = "";
+
+        if (idMurid == "") {
+            idMuridError = "ID murid diperlukan";
+        } else if (idMurid.length > 10) {
+            idMuridError = "ID murid mesti tidak melebihi 10 aksara";
+        } else if (!/^[a-zA-Z0-9]+$/.test(idMurid)) {
+            idMuridError = "ID murid hanya boleh guna aksara a-z dan 0-9";
+        }
+
+        document.getElementById("idMuridError").innerHTML = idMuridError;
+    }
+
+    function validateForm() {
+        var idMuridError = document.getElementById("idMuridError").innerHTML;
+        if (idMuridError) {
+            return false;
+        }
+        return true;
+    }
+    </script>
 </head>
 <body>
 <div id="isi">
 <h2>PENDAFTARAN MURID BARU</h2>
 
 <!-- Registration Form -->
-<form method="post" action="signup_simpan.php">
+<form name="registrationForm" method="post" action="signup_simpan.php" onsubmit="return validateForm()">
     <font color="red">*Pastikan maklumat anda betul sebelum membuat pendaftaran.</font>
     <p>ID murid<br>
-    <input type="text" name="idMurid" placeholder="TAIP SINI" minlength="5" maxlength="5" size="30" required>
+    <input type="text" name="idMurid" placeholder="TAIP SINI" minlength="5" maxlength="30" size="30" oninput="validateID()" required>
     <br>
-    <font style='font-size: 10px; color: red;'>*5 digit sahaja</font></p>
+    <span id="idMuridError" class="error-message">*5 digit sahaja</span></p>
     <p>Nama<br>
     <input type="text" name="namaMurid" placeholder="NAMA ANDA" size="60" required></p>
     <p>Jantina<br>
